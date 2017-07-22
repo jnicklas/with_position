@@ -1,7 +1,28 @@
+//! A Rust iterator extension trait to extend iterators with a new method called
+//! `with_position` which makes it easier to handle an element being the first,
+//! last, middle or only element in an iteration. It is similar to a method in
+//! itertools with the same name, but with a slightly different API, which IMO is
+//! a bit easier to use.
+//!
+//! # Example
+//!
+//! ```
+//! use with_position::{WithPosition, Position};
+//!
+//! let result: Vec<_> = vec![1,2,3].into_iter().with_position().collect();
+//!
+//! assert_eq!(result[0], (Position::First, 1));
+//! assert_eq!(result[1], (Position::Middle, 2));
+//! assert_eq!(result[2], (Position::Last, 3));
+//!
+//! assert_eq!(result[0].0.is_first(), true);
+//! assert_eq!(result[1].0.is_first(), false);
+//! ```
+
 use std::iter::Peekable;
 use std::cell::Cell;
 
-// index comparisons
+/// An enum which indicates the position of an item in an iteration.
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum Position {
     First,
@@ -24,6 +45,8 @@ impl Position {
     }
 }
 
+/// An iterator adapter that yields tuples where the first element is a Position
+/// and the second is the item.
 pub struct PositionIterator<T> where T: Iterator {
     iter: Peekable<T>,
     did_iter: Cell<bool>,
@@ -55,9 +78,12 @@ impl<T> Iterator for PositionIterator<T> where T: Iterator {
     }
 }
 
+/// Extension trait for iterators which adds the `with_position` method
 pub trait WithPosition where {
     type Iterator: Iterator;
 
+    /// Yield a tuple of `(Position, item)` where position indicates whether this
+    /// is the first, middle or last item.
     fn with_position(self) -> PositionIterator<Self::Iterator>;
 }
 
