@@ -1,5 +1,7 @@
 [package]
 name = "with_position"
+description = "A Rust extension trait for iterators which yields the position of the item in the iteration"
+license = "MIT"
 version = "0.1.0"
 authors = ["Jonas Nicklas <jonas.nicklas@gmail.com>"]
 
