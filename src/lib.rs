@@ -56,7 +56,7 @@ impl<T> Iterator for PositionIterator<T> where T: Iterator {
     type Item = (Position, T::Item);
 
     fn next(&mut self) -> Option<Self::Item> {
-        let is_first = self.did_iter.get();
+        let did_iter = self.did_iter.get();
         self.did_iter.set(true);
 
         let next = match self.iter.next() {
@@ -64,7 +64,7 @@ impl<T> Iterator for PositionIterator<T> where T: Iterator {
             None => return None,
         };
 
-        if is_first {
+        if did_iter {
             match self.iter.peek() {
                 Some(_) => Some((Position::Middle, next)),
                 None => Some((Position::Last, next)),
